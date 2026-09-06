@@ -1,7 +1,10 @@
+import http from "http";
+
 import debug from "debug";
 import express from "express";
-import http from "http";
 import { Server as SocketIO } from "socket.io";
+
+import { installMediaBridge } from "./media";
 
 type UserToFollow = {
   socketId: string;
@@ -49,12 +52,25 @@ try {
     allowEIO3: true,
   });
 
+  const media = installMediaBridge(app, io);
   io.on("connection", (socket) => {
+    media.connected(socket);
     ioDebug("connection established!");
     io.to(`${socket.id}`).emit("init-room");
     socket.on("join-room", async (roomID) => {
+      if (
+        typeof roomID !== "string" ||
+        !/^[a-zA-Z0-9_-]{1,128}$/.test(roomID)
+      ) {
+        return;
+      }
+      // One collaboration room per connection; follow rooms are managed separately.
+      if (socket.data.mediaRoom && socket.data.mediaRoom !== roomID) {
+        return;
+      }
       socketDebug(`${socket.id} has joined ${roomID}`);
       await socket.join(roomID);
+      socket.data.mediaRoom = roomID;
       const sockets = await io.in(roomID).fetchSockets();
       if (sockets.length <= 1) {
         io.to(`${socket.id}`).emit("first-in-room");

@@ -27,7 +27,7 @@ import { t } from "@excalidraw/excalidraw/i18n";
 import { withBatchedUpdates } from "@excalidraw/excalidraw/reactUtils";
 
 import throttle from "lodash.throttle";
-import { PureComponent } from "react";
+import { PureComponent, lazy, Suspense } from "react";
 
 import { bumpElementVersions } from "@excalidraw/excalidraw/data/restore";
 
@@ -101,6 +101,8 @@ export const isCollaboratingAtom = atom(false);
 export const isOfflineAtom = atom(false);
 
 interface CollabState {
+  mediaIdentity: string | null;
+  mediaMembers: string[];
   errorMessage: string | null;
   /** errors related to saving */
   dialogNotifiedErrors: Record<string, boolean>;
@@ -148,6 +150,8 @@ class Collab extends PureComponent<CollabProps, CollabState> {
   constructor(props: CollabProps) {
     super(props);
     this.state = {
+      mediaIdentity: null,
+      mediaMembers: [],
       errorMessage: null,
       dialogNotifiedErrors: {},
       username: importUsernameFromLocalStorage() || "",
@@ -416,6 +420,7 @@ class Collab extends PureComponent<CollabProps, CollabState> {
     this.fileManager.reset();
     this.followedBy = new Set();
     if (!opts?.isUnload) {
+      this.setState({ mediaIdentity: null, mediaMembers: [] });
       this.setIsCollaborating(false);
       this.setActiveRoomLink(null);
       appJotaiStore.set(userToFollowAtom, null);
@@ -873,6 +878,12 @@ class Collab extends PureComponent<CollabProps, CollabState> {
   };
 
   setCollaborators(sockets: SocketId[]) {
+    if (import.meta.env.VITE_APP_MEDIA_SERVER_URL) {
+      this.setState({
+        mediaIdentity: this.portal.socket?.id ?? null,
+        mediaMembers: sockets,
+      });
+    }
     const collaborators: InstanceType<typeof Collab>["collaborators"] =
       new Map();
     for (const socketId of sockets) {
@@ -1070,6 +1081,26 @@ class Collab extends PureComponent<CollabProps, CollabState> {
 
     return (
       <>
+        {import.meta.env.VITE_APP_MEDIA_SERVER_URL &&
+          this.state.mediaIdentity &&
+          this.portal.socket &&
+          this.portal.roomId &&
+          this.portal.roomKey && (
+            <Suspense fallback={null}>
+              <MediaPanel
+                key={`${this.portal.roomId}:${this.state.mediaIdentity}`}
+                options={{
+                  socket: this.portal.socket,
+                  roomId: this.portal.roomId,
+                  roomKey: this.portal.roomKey,
+                  identity: this.state.mediaIdentity,
+                  name: this.state.username,
+                  apiUrl: import.meta.env.VITE_APP_MEDIA_SERVER_URL,
+                }}
+                members={this.state.mediaMembers}
+              />
+            </Suspense>
+          )}
         {errorMessage != null && (
           <ErrorDialog onClose={() => this.setErrorDialog(null)}>
             {errorMessage}
@@ -1091,5 +1122,7 @@ if (isTestEnv() || isDevEnv()) {
 }
 
 export default Collab;
+
+const MediaPanel = lazy(() => import("../media/MediaPanel"));
 
 export type TCollabClass = Collab;

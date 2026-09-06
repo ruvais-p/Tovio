@@ -1,0 +1,4 @@
+.env
+livekit.yaml
+certs/
+!package-lock.json

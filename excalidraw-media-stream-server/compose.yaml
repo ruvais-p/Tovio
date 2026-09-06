@@ -1,0 +1,27 @@
+# Linux production host. Copy .env.example and livekit.example.yaml first.
+services:
+  media-api:
+    build: .
+    network_mode: host
+    env_file: ${MEDIA_ENV_FILE:-.env}
+    restart: unless-stopped
+    init: true
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:'+process.env.PORT+'/readyz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+  livekit:
+    image: livekit/livekit-server:v1.13.1
+    command: ["--config", "/etc/livekit.yaml"]
+    network_mode: host
+    restart: unless-stopped
+    volumes:
+      - ./livekit.yaml:/etc/livekit.yaml:ro
+      - ./certs:/etc/livekit-certs:ro

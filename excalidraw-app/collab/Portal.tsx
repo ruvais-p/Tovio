@@ -65,6 +65,9 @@ class Portal {
       return;
     }
     this.queueFileUpload.flush();
+    if (import.meta.env.VITE_APP_MEDIA_SERVER_URL) {
+      this.socket.emit("media-leave");
+    }
     this.socket.close();
     this.socket = null;
     this.roomId = null;

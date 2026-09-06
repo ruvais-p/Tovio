@@ -20,6 +20,17 @@ If you are not familiar with pm2: https://pm2.keymetrics.io/docs/usage/quick-sta
   yarn start:dev
   ```
 
+# Optional session media bridge
+
+The separate `excalidraw-media-stream-server` can verify that a socket currently belongs to a collaboration room. Configure both values together:
+
+```dotenv
+MEDIA_MEMBERSHIP_SECRET=a-random-shared-secret-at-least-32-characters
+MEDIA_API_INTERNAL_URL=http://127.0.0.1:3003
+```
+
+Use the same `MEDIA_MEMBERSHIP_SECRET` in the media API. Keep the internal URL and its authenticated endpoints off the public reverse proxy. With both variables absent, the media bridge stays disabled and this server runs in drawing-only mode. See `../excalidraw-media-stream-server/README.md` for the complete media deployment, TLS/TURN, frontend, validation, and rollback instructions.
+
 # Start with pm2
 
 ```
