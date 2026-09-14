@@ -7,7 +7,7 @@ Media content is encrypted end to end in supported browsers with a key derived f
 ## Pinned components
 
 - LiveKit Server: `v1.13.1`
-- LiveKit browser client: `2.22.2` in `excalidraw-app/package.json`
+- LiveKit browser client: `2.22.0` in `excalidraw-app/package.json`
 - LiveKit Node server SDK: `2.18.0`
 - Node container: `24.12.0-alpine`
 
@@ -85,6 +85,21 @@ VITE_APP_MEDIA_SERVER_URL=https://media-api.example.com
 `VITE_APP_MEDIA_SERVER_URL` is optional. Leave it unset to keep the drawing-only experience. The frontend fails closed when browser E2EE is unavailable: it does not publish transport-only media. Validate current desktop Chrome, Firefox, and Safari releases used by your organization; embedded browsers and older releases may lack the insertable-stream support required by LiveKit E2EE.
 
 ## Build and start
+
+For local development, with the room server on port `3002` and Docker running,
+start LiveKit and the media API watcher together with:
+
+```sh
+yarn start:dev
+```
+
+This starts the pinned LiveKit container on ports `7880`, `7881`, and
+`50000-50100`, loads the development-only values from `.env.development`, accepts
+the Excalidraw dev frontend at `http://localhost:3001`, and watches the API source
+for changes. The LiveKit container is stopped when the command exits if the
+command started it. The checked-in development credentials are intentionally
+local-only and must not be used in production. Use `yarn dev` to run only the API
+when LiveKit is managed separately.
 
 Validate the rendered Compose configuration without creating local secret files:
 

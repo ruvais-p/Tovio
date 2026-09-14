@@ -39,7 +39,7 @@ Fill this in for each capacity or relay run:
 | Field | Value |
 | --- | --- |
 | Date/time and location | Pending |
-| LiveKit/server SDK/client versions | `1.13.1` / `2.18.0` / `2.22.2` |
+| LiveKit/server SDK/client versions | `1.13.1` / `2.18.0` / `2.22.0` |
 | Host CPU | Pending (local reference host: Intel Core i5-12450H, 12 logical CPUs) |
 | Host RAM | Pending (local reference host: 7.4 GiB) |
 | Host uplink/downlink | Pending |

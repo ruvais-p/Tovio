@@ -2,14 +2,11 @@
   position: relative;
   box-sizing: border-box;
   padding-right: var(--session-media-width);
-  background: #f2f3f5;
-  &:has(.theme--dark) {
-    background: #17181a;
-  }
+  background: transparent;
 }
 
 .session-media {
-  --media-surface: #fff;
+  --media-surface: rgb(255 255 255 / 92%);
   --media-text: #303238;
   --media-muted: #686b72;
   position: absolute;
@@ -20,6 +17,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  background: transparent;
   font: 12px/1.45 "Assistant", system-ui, sans-serif;
   color: var(--media-text);
   .excalidraw-app:has(.theme--dark) & {
@@ -42,10 +40,17 @@
     cursor: wait;
   }
   &__header {
+    align-self: flex-end;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    min-height: 36px;
+    gap: 7px;
+    min-height: 32px;
+    padding: 0 10px;
+    border: 1px solid rgb(128 128 128 / 18%);
+    border-radius: 999px;
+    background: var(--media-surface);
+    box-shadow: 0 4px 14px rgb(0 0 0 / 8%);
+    backdrop-filter: blur(14px);
     color: var(--media-muted);
   }
   &__header svg {
@@ -56,20 +61,33 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
+    margin-top: auto;
   }
   &__messages {
     overflow: auto;
     min-height: 0;
     color: var(--media-muted);
   }
+  &__messages:not(:empty) {
+    padding: 10px;
+    border: 1px solid rgb(128 128 128 / 18%);
+    border-radius: 12px;
+    background: var(--media-surface);
+    box-shadow: 0 4px 14px rgb(0 0 0 / 8%);
+    backdrop-filter: blur(14px);
+  }
   &__messages p {
-    margin: 8px 0;
+    margin: 0 0 8px;
+  }
+  &__messages p:last-child {
+    margin-bottom: 0;
   }
   &__messages button {
-    background: var(--media-surface);
-    border-radius: 8px;
-    padding: 8px 10px;
-    margin-bottom: 8px;
+    width: 100%;
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: #3c4043;
+    color: #fff;
   }
   &--compact &__header {
     font-size: 11px;
@@ -81,14 +99,14 @@
   aspect-ratio: 16 / 9;
   flex-shrink: 0;
   overflow: hidden;
-  border-radius: 12px;
-  background: #303237;
+  border-radius: 14px;
+  background: #202124;
   color: #fff;
   isolation: isolate;
-  box-shadow: inset 0 0 0 2px transparent;
-  transition: box-shadow 180ms ease;
+  box-shadow: inset 0 0 0 2px transparent, 0 8px 24px rgb(0 0 0 / 16%);
+  transition: box-shadow 180ms ease, transform 180ms ease;
   &--speaking {
-    box-shadow: inset 0 0 0 2px #a6a0ff;
+    box-shadow: inset 0 0 0 2px #a6a0ff, 0 8px 24px rgb(0 0 0 / 18%);
   }
   &::after {
     position: absolute;
@@ -116,9 +134,19 @@
     inset: 0;
     display: grid;
     place-content: center;
-    font-size: clamp(20px, 3vw, 36px);
+    background: #202124;
+  }
+  &__avatar span {
+    display: grid;
+    place-content: center;
+    width: clamp(52px, 6vw, 72px);
+    height: clamp(52px, 6vw, 72px);
+    border-radius: 50%;
+    background: #5f6368;
+    font-size: clamp(20px, 3vw, 32px);
     font-weight: 600;
-    color: #dcd9fb;
+    color: #fff;
+    box-shadow: 0 2px 8px rgb(0 0 0 / 22%);
   }
   &__name {
     position: absolute;
@@ -163,13 +191,18 @@
 }
 
 .media-controls {
-  margin-top: auto;
-  padding-top: 8px;
+  align-self: center;
+  padding: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
   flex-shrink: 0;
+  border: 1px solid rgb(255 255 255 / 12%);
+  border-radius: 999px;
+  background: rgb(32 33 36 / 94%);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 22%);
+  backdrop-filter: blur(16px);
   .media-control {
     width: 42px;
     height: 42px;
@@ -177,15 +210,16 @@
     display: grid;
     place-content: center;
     border-radius: 50%;
-    background: var(--media-surface);
+    background: #3c4043;
+    color: #fff;
     transition: background 150ms ease, transform 150ms ease;
   }
   .media-control:hover {
     transform: translateY(-2px);
   }
   .media-control--off {
-    background: #f9dedc;
-    color: #a52a24;
+    background: #d93025;
+    color: #fff;
   }
   .media-control--raised {
     background: #ddd8ff;
@@ -193,14 +227,15 @@
   }
 }
 .session-media--compact .media-controls {
-  gap: 4px;
+  gap: 3px;
+  padding: 4px;
   .media-control {
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
   }
   svg {
-    width: 18px;
-    height: 18px;
+    width: 17px;
+    height: 17px;
   }
 }
 .media-more {

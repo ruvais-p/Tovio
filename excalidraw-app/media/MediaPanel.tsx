@@ -117,7 +117,7 @@ function ParticipantVideo({
       }`}
     >
       <div className="media-tile__avatar" aria-hidden="true">
-        {person.name.trim().slice(0, 1).toUpperCase() || "?"}
+        <span>{person.name.trim().slice(0, 1).toUpperCase() || "?"}</span>
       </div>
       <video
         ref={video}
@@ -298,15 +298,6 @@ function CallRail({
           <Icon kind="lock" />
         </span>
       </div>
-      <div className="session-media__tiles">
-        {visible.map((person) => (
-          <ParticipantVideo
-            key={person.identity}
-            person={person}
-            session={session}
-          />
-        ))}
-      </div>
       {hidden.length > 0 && (
         <button
           ref={moreButton}
@@ -318,6 +309,15 @@ function CallRail({
           <Icon kind="people" /> +{hidden.length} more
         </button>
       )}
+      <div className="session-media__tiles">
+        {visible.map((person) => (
+          <ParticipantVideo
+            key={person.identity}
+            person={person}
+            session={session}
+          />
+        ))}
+      </div>
       {overflow && (
         <section
           className="media-overflow"
